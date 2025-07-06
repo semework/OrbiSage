@@ -12,7 +12,7 @@ Orbisage lets you experiment with how an AI bot can greet you, guide you around 
 
 Instead of tangled `if/else` statements, Orbisage uses a **directed graph**:
 
-<img src="assets/orbisage_router_graph.png" style="display: block;
+<img src="https://github.com/semework/OrbiSage/blob/main/asssets/orbisage_router_graph.png" style="display: block;
   margin-left: auto;
   margin-right: auto;
   width: 75%;"/> 
