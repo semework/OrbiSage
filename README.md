@@ -1,107 +1,49 @@
-# Orbisage
+# 🌿 Orbisage
 
-**Orbisage** is an **educational yet production-ready** template for building a **multi-agent AI router** using [LangChain](https://www.langchain.com/) and [LangGraph](https://github.com/langchain-ai/langgraph).  
-It listens to free-form natural language queries and dispatches them to one of four specialized agents:
-
-| Agent      | Role                                   | Example Query                                 |
-|------------|----------------------------------------|-----------------------------------------------|
-| **greet**  | Welcomes user and routes next step     | “Hello there!”                                |
-| **Navigator**  | Provides simple indoor directions     | “How do I get from lobby to the gym?”         |
-| **News**       | Shares the latest headlines or summaries | “What’s new in AI today?”                    |
-| **Discovery**  | Offers a science or general knowledge fact | “Tell me a fun fact about honey.”             |
-| **Joke**       | Tells a quick one-liner              | “Make me laugh about programming.”            |
-
-Orbisage is basically your own friendly playground for trying out multi-agent ideas — you can start really small, test out one thing at a time, and see how they work together.
-It’s simple enough that you don’t feel stuck reading a giant manual, but it’s flexible enough to build into something real if you want to.
-Think of it as a laid-back lab assistant that never gets tired of your experiments — whether you want to navigate an imaginary building,
-share a science fact, or just tinker with different chat responses, you can do all of that here.
-
-Orbisage demonstrates:
-
-1. **Graph-based routing:** Use LangGraph to define a directed graph of nodes (agents) and edges (conditional transitions).
-2. **Stateful workflows:** Maintain a conversation state (`user_input`, `messages`) that persists across nodes.
-3. **LLM tooling:** Bind LLM calls to Python functions (“tools”) using LangChain agents.
-4. **Interactive UIs:** Demo inline and external chat interfaces via Gradio, embeddable in notebooks or run as standalone web apps.
-5. **Cloud readiness:** Includes Docker and Kubernetes manifests for containerized deployment.
+**Orbisage** is a friendly, practical starter template for exploring how you can build a **multi-agent AI router** using [LangChain](https://www.langchain.com/) and [LangGraph](https://github.com/langchain-ai/langgraph).
 
 ---
 
-## Table of Contents
-
-1. [Architecture](#architecture)  
-2. [Quick Start](#quick-start)  
-3. [Interactive Notebook Demo](#interactive-notebook-demo)  
-4. [Standalone Web UI](#standalone-web-ui)  
-5. [Deployment](#deployment)  
-   - Docker  
-   - Kubernetes  
-6. [Example Queries](#example-queries)  
-7. [Extending Orbisage](#extending-orbisage)  
-8. [Contributing & Licensing](#contributing--licensing)  
+Orbisage lets you experiment with how an AI bot can greet you, guide you around a building, tell you the latest news, share a fun fact, or even make you laugh — all routed through a simple, visual graph. It’s small enough to learn in an afternoon but flexible enough to grow into real-world workflows.
 
 ---
 
-## Architecture
+## ✨ How It Works
 
-### Graph Router
+Instead of tangled `if/else` statements, Orbisage uses a **directed graph**:
 
-Instead of traditional `if/elif` logic, Orbisage uses a **directed graph**:
-
-
-<img src="assets/sentiments.png" style="display: block;
+<img src="assets/orbisage_router_graph.png" style="display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 75%;" /> 
+  width: 75%;"/> 
 
-```
-     greet
-   /   |   \
-Nav  News  Disc
-   \   |   /
-       Joke
-       ↓
-      END
-```
-
-- **Nodes** represent agents; each is a Python callable that reads/writes state.  
-- **Conditional Edges**: A function `decide_route(state)` inspects `state["user_input"]` and returns the next node key.  
-- **State**: A `TypedDict` with fields `user_input` (the user’s message) and `messages` (transcript).
-
-LangGraph executes the workflow reliably, preserving state and ensuring only one write per step, eliminating concurrency bugs.
-
-### Agents / Tools
-
-- Implemented via **LangChain’s** Tool and Agent interfaces.  
-- Tools call LLMs under the hood but expose simple Python functions.  
-- Swap out the toy implementations with real external APIs (e.g. Google Maps, NewsAPI, WolframAlpha).
+- **Nodes:** Each agent is a Python function.
+- **Edges:** Conditional transitions that inspect your input.
+- **State:** Keeps your conversation context as you move through nodes.
 
 ---
 
-## Quick Start
+## 📦 Quick Start
 
-### Prerequisites
+### Requirements
 
-- Python 3.9+  
-- (Optional) OpenAI API key for real LLM calls  
+- Python 3.9+
+- (Optional) OpenAI API Key for real LLM calls
 
-### Installation
+### Install & Setup
 
 ```bash
-# Clone the repo
-git clone https://github.com/your-handle/orbisage.git
-cd orbisage
+git clone git@github.com:semework/OrbiSage.git
+cd OrbiSage
 
-# Set up a virtual environment
 python -m venv .venv && source .venv/bin/activate
 
-# Editable install (runtime + dev)
 pip install -e .[dev]
 
-# Copy the example env
-cp .env.example .env  # add your OPENAI_API_KEY if desired
+cp .env.example .env  # Add OPENAI_API_KEY if you want
 ```
 
-### Verify Package
+### Verify
 
 ```bash
 python -c "from orbisage_router.graph import build_router_graph; print(build_router_graph())"
@@ -109,64 +51,46 @@ python -c "from orbisage_router.graph import build_router_graph; print(build_rou
 
 ---
 
-## Interactive Notebook Demo
-
-Launch Jupyter:
+## 📝 Notebook Demo
 
 ```bash
 jupyter notebook orbisage_full_demo.ipynb
 ```
 
-Steps in notebook:
-
-1. **Install dependencies** (cell with `pip install`).  
-2. **Import & Visualise** the router graph as a Mermaid PNG.  
-3. **Inline Gradio Chat** – an embedded chat interface for quick tests.  
-4. **External Gradio Chat** – serves on `0.0.0.0:7860` for Docker/K8s.
-
-Feel free to modify prompts, add new nodes, and watch the graph update instantly.
+- Visualise the graph (Mermaid).
+- Inline Gradio chat.
+- External chat served on `0.0.0.0:7860` for Docker/K8s.
 
 ---
 
-## Standalone Web UI
-
-Run the Gradio web app:
+## 🌐 Web UI
 
 ```bash
 python web/app.py
 ```
 
-Visit: [http://localhost:7860](http://localhost:7860)  
-Chat with Orbisage in a user-friendly web page, streaming responses live.
+Open [http://localhost:7860](http://localhost:7860)
 
 ---
 
-## Deployment
+## 🚢 Deployment
 
 ### Docker
 
-Dockerfile is included. To build and run:
-
 ```bash
-docker build -t orbisage .
-docker run --rm -e OPENAI_API_KEY=$OPENAI_API_KEY -p 7860:7860 orbisage
+docker build -t orbisage:latest .
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -p 7860:7860 orbisage:latest
 ```
 
-The web UI is available on port 7860.
-
 ### Kubernetes
-
-`k8s/orbisage.yaml`:
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  name: orbisage
+metadata: { name: orbisage }
 spec:
   replicas: 2
-  selector:
-    matchLabels: { app: orbisage }
+  selector: { matchLabels: { app: orbisage } }
   template:
     metadata: { labels: { app: orbisage } }
     spec:
@@ -188,52 +112,49 @@ spec:
   ports: [ { port: 80, targetPort: 7860 } ]
 ```
 
-Apply:
-
 ```bash
 kubectl apply -f k8s/orbisage.yaml
 ```
 
 ---
 
-## Example Queries
+## 🔍 Example Queries
 
-| Query                                  | Routed Agent | Sample Response                               |
-|----------------------------------------|--------------|-----------------------------------------------|
-| “Hello!”                               | greet        | “Hello! How can I assist you today?”          |
-| “How do I get to the gym?”             | Navigator    | “Go Office → Elevator → Gym.”                 |
-| “Share today’s AI headlines.”          | News         | “AI news: LLM-based agents are rising…”       |
-| “Tell me something about pyramids.”    | Discovery    | “Honey from ancient Egypt remains edible!”    |
-| “Why did the bug cross the code?”      | Joke         | “Because it needed to debug its life choices!” |
-
----
-
-## Extending Orbisage
-
-1. **Add a Tool**  
-   ```python
-   def weather_tool(query): ...
-   ```
-2. **Add a Node**  
-   ```python
-   g.add_node("Weather", weather_node)
-   ```
-3. **Wire Routing**  
-   ```python
-   g.add_conditional_edges("greet", decide_route, { **routes, "weather": "Weather" })
-   ```
-4. **Persistent Memory**  
-   Swap `ConversationBufferMemory` with a vector store or Redis-backed memory.
+| Query                           | Agent     | Response                                   |
+|---------------------------------|-----------|--------------------------------------------|
+| “Hello!”                        | greet     | “Hello! How can I help you today?”         |
+| “How do I get to the gym?”      | Navigator | “Office → Elevator → Gym.”                 |
+| “What’s in AI news today?”      | News      | “LLM-based agents are trending.”           |
+| “Tell me something about honey.”| Discovery | “Honey from ancient Egypt is edible!”      |
+| “Give me a programming joke.”   | Joke      | “Why do programmers prefer dark mode?”     |
 
 ---
 
-## Contributing & License
+## 🧩 Orbisage
 
-- Contributions: Fork, branch, PR – we love new ideas!  
-- Tests: Use `pytest` to add unit tests.  
-- Lint: `ruff .` to keep code style in check.  
+Orbisage is basically your own friendly playground for trying out multi-agent ideas — you can start really small, test out one thing at a time, and see how they work together.
+It’s simple enough that you don’t feel stuck reading a giant manual, but it’s flexible enough to build into something real if you want to.
+Think of it as a laid-back lab assistant that never gets tired of your experiments — whether you want to navigate an imaginary building,
+share a science fact, or just tinker with different chat responses, you can do all of that here.”
 
-Released under **MIT License** – see [LICENSE](LICENSE) for details.  
+
 ---
 
-Happy routing! – The Orbisage Team
+## 🧩 Extending Orbisage
+
+- Add new tools or plug in real APIs.
+- Add nodes and update the graph.
+- Use persistent memory like Redis or a vector store.
+- Monitor with LangSmith.
+
+---
+
+## 🤝 Contributing & License
+
+Pull requests and forks are welcome — add tests, lint with `ruff`.
+
+Licensed under **MIT License**.
+
+---
+
+**Happy routing! — The Orbisage Team**
