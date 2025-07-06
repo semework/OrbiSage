@@ -1,0 +1,25 @@
+# Core LLM & routing
+langchain>=0.1.0
+langgraph>=0.0.32
+openai>=1.0.0
+
+# Typing helpers
+typing_extensions>=4.0.0
+
+# Graph visualization
+graphviz
+pydot
+networkx
+
+# UI frameworks
+gradio
+streamlit
+
+# Backend server
+fastapi
+uvicorn[standard]
+
+# Notebook support
+jupyter
+notebook
+ipython
