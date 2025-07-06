@@ -22,7 +22,7 @@ Instead of tangled `if/else` statements, Orbisage uses a **directed graph**:
 - **State:** Keeps your conversation context as you move through nodes.
 
 ---
-<img src="assets/orbisage_router_graph.png" style="display: block;
+<img src="[assets/orbisage_router_graph.png](https://github.com/semework/OrbiSage/blob/main/asssets/orbisage_router_graph.png)" style="display: block;
   margin-left: auto;
   margin-right: auto;
   width: 75%;" /> 
